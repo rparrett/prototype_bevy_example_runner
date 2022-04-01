@@ -8,6 +8,18 @@ jobs:
   run-examples:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            bevy/target/
+          key: ${{ runner.os }}-cargo-build-${{ matrix.toolchain }}-${{ hashFiles('**/Cargo.toml') }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
       - name: Install Bevy dependencies
         run: |
           sudo apt-get update;
@@ -19,14 +31,9 @@ jobs:
           sudo add-apt-repository ppa:oibaf/graphics-drivers -y
           sudo apt-get update
           sudo apt install -y xvfb libegl1-mesa libgl1-mesa-dri libxcb-xfixes0-dev mesa-vulkan-drivers
-      - name: checkout bevy
-        run: |
-          git clone https://github.com/bevyengine/bevy bevy
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
       - name: Build bevy
         run: |
+          git clone https://github.com/bevyengine/bevy bevy
           cd bevy
           cargo build  --features=x11
       - name: Run examples
