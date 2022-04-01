@@ -29,6 +29,7 @@ jobs:
 
             true
           else
+            echo "No updates"
             false
           fi
       - if: ${{ success() }}
