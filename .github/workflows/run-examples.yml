@@ -35,13 +35,13 @@ jobs:
         run: |
           git clone https://github.com/bevyengine/bevy bevy
           cd bevy
-          cargo build  --features=x11
+          cargo build  --features="x11,bevy_ci_testing"
       - name: Run examples
         run: |
           cd bevy
           for example in ../config/*.ron; do
             example_name=`basename $example .ron`
             echo "running $example_name - "`date`
-            time CI_TESTING_CONFIG=$example xvfb-run cargo run --example $example_name --features=x11
+            time CI_TESTING_CONFIG=$example xvfb-run cargo run --example $example_name --features="x11,bevy_ci_testing"
             sleep 10
           done
