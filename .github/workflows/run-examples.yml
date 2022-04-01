@@ -39,10 +39,16 @@ jobs:
           cargo build --features="x11,bevy_ci_testing"
       - name: Run examples
         run: |
+          EXAMPLES=`cd get_examples && cargo run`
           cd bevy
-          for example in ../config/*.ron; do
-            example_name=`basename $example .ron`
-            echo "running $example_name - "`date`
-            time CI_TESTING_CONFIG=$example xvfb-run cargo run --example $example_name --features="x11,bevy_ci_testing"
+          echo $EXAMPLES | while read line; do
+            echo "running $line - "`date`
+            if test -f "../config/$line.ron"; then
+              CONFIG="../config/$line.ron"
+            else
+              CONFIG="../config/default.ron"
+            fi
+            echo $CONFIG
+            time CI_TESTING_CONFIG=$CONFIG xvfb-run cargo run --example $line --features="x11,bevy_ci_testing"
             sleep 10
           done
