@@ -48,7 +48,6 @@ jobs:
             else
               CONFIG="../config/default.ron"
             fi
-            echo $CONFIG
             time CI_TESTING_CONFIG=$CONFIG xvfb-run cargo run --example $line --features="x11,bevy_ci_testing"
             sleep 10
           done
