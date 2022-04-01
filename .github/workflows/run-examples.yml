@@ -35,9 +35,10 @@ jobs:
         run: |
           git clone https://github.com/bevyengine/bevy bevy
           cd bevy
-          cargo build  --features="x11,bevy_ci_testing"
+          cargo build --features="x11,bevy_ci_testing"
       - name: Run examples
         run: |
+          set -x
           cd bevy
           for example in ../config/*.ron; do
             example_name=`basename $example .ron`
