@@ -41,7 +41,7 @@ jobs:
         run: |
           EXAMPLES=`cd get_examples && cargo run`
           cd bevy
-          echo $EXAMPLES | while read line; do
+          echo "$EXAMPLES" | while read line; do
             echo "running $line - "`date`
             if test -f "../config/$line.ron"; then
               CONFIG="../config/$line.ron"
