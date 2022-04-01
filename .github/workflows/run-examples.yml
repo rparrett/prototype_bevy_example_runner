@@ -8,6 +8,7 @@ jobs:
   run-examples:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
           path: |
@@ -38,7 +39,6 @@ jobs:
           cargo build --features="x11,bevy_ci_testing"
       - name: Run examples
         run: |
-          set -x
           cd bevy
           for example in ../config/*.ron; do
             example_name=`basename $example .ron`
