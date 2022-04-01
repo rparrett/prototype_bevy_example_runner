@@ -1,5 +1,5 @@
 # .github/workflows/scheduled-builds.yml
-name: Trigger Site Rebuild on a CRON Schedule
+name: Check the Bevy repository for updates
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
     - cron: "55 * * * *"
   workflow_dispatch:
 jobs:
-  run-examples:
+  check-for-updates:
     runs-on: ubuntu-latest
     steps:
       - name: Check for Bevy updates
