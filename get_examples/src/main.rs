@@ -50,7 +50,7 @@ fn main() {
             "../config/default.ron".to_string()
         };
 
-        let output = Command::new("xvfb")
+        let output = Command::new("xvfb-run")
             .current_dir(std::fs::canonicalize("../bevy").unwrap())
             .env("CI_TESTING_CONFIG", config)
             .args([
