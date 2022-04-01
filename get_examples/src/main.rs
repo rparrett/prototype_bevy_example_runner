@@ -13,7 +13,7 @@ struct Cargo {
 }
 
 fn main() {
-    let ignore = ["android"];
+    let ignore = ["android", "custom_loop"];
 
     let toml_str = fs::read_to_string("../bevy/Cargo.toml").unwrap();
 
