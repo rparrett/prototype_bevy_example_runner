@@ -1,7 +1,10 @@
 name: Run bevy examples
-  on:
-    workflow_call:
-    workflow_dispatch:
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
   run-examples:
     runs-on: ubuntu-latest
     steps:
