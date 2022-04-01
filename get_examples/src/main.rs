@@ -68,7 +68,7 @@ fn main() {
         io::stderr().write_all(&output.stderr).unwrap();
 
         let status_string = if output.status.success() {
-            ":heavy_check_mark:".to_string()
+            ":white_check_mark:".to_string()
         } else {
             format!(":x: (Code {})", output.status.code().unwrap())
         };
