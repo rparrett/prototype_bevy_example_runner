@@ -39,7 +39,7 @@ jobs:
       - name: Run examples
         run: |
           cd bevy
-          for example in .github/example-run/*.ron; do
+          for example in ../config/*.ron; do
             example_name=`basename $example .ron`
             echo "running $example_name - "`date`
             time CI_TESTING_CONFIG=$example xvfb-run cargo run --example $example_name --features=x11
