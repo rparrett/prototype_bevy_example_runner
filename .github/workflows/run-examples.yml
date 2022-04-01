@@ -16,7 +16,9 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-            bevy/target/
+            bevy/target/debug/build
+            bevy/target/debug/deps
+            bevy/target/debug/incremental
           key: ${{ runner.os }}-cargo-build-${{ matrix.toolchain }}-${{ hashFiles('**/Cargo.toml') }}
       - uses: actions-rs/toolchain@v1
         with:
