@@ -1,9 +1,10 @@
 # .github/workflows/scheduled-builds.yml
-name: Check for Updates
+name: Check the Bevy repository for updates
 
 on:
   schedule:
-    - cron: "0 * * * *"
+    # Runs "at minute 55 past every hour" (see https://crontab.guru)
+    - cron: "55 * * * *"
   workflow_dispatch:
 jobs:
   check-for-updates:
@@ -26,4 +27,15 @@ jobs:
             git pull github meta --ff-only
             git commit -m "Set latest commit" latest-commit
             git push github HEAD:meta
+
+            true
+          else
+            echo "No updates"
+            false
           fi
+      - if: ${{ success() }}
+        name: Invoke Example Runner
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Run Examples
+          token: ${{ secrets.PERSONAL_TOKEN }}
