@@ -25,4 +25,14 @@ jobs:
             git pull github meta --ff-only
             git commit -m "Set latest commit" latest-commit
             git push github HEAD:meta
+
+            true
+          else
+            false
           fi
+      - if: ${{ success() }}
+        name: Invoke Example Runner
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Run Examples
+          token: ${{ secrets.PERSONAL_TOKEN }}
