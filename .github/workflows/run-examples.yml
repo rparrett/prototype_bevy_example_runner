@@ -34,8 +34,11 @@ jobs:
           sudo apt install -y xvfb libegl1-mesa libgl1-mesa-dri libxcb-xfixes0-dev mesa-vulkan-drivers
       - name: Build bevy
         run: |
-          git clone https://github.com/bevyengine/bevy bevy
+          git init bevy
           cd bevy
+          git remote add origin https://github.com/bevyengine/bevy
+          git pull --depth=1 origin latest
+
           cargo build --features="x11,bevy_ci_testing"
       - name: Run examples
         run: |
