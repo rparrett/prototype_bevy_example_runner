@@ -1,0 +1,36 @@
+name: Run bevy examples
+  on:
+    workflow_call:
+    workflow_dispatch:
+  run-examples:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Bevy dependencies
+        run: |
+          sudo apt-get update;
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install --no-install-recommends -yq \
+            libasound2-dev libudev-dev;
+      - name: install xvfb, llvmpipe and lavapipe
+        run: |
+          sudo apt-get update -y -qq
+          sudo add-apt-repository ppa:oibaf/graphics-drivers -y
+          sudo apt-get update
+          sudo apt install -y xvfb libegl1-mesa libgl1-mesa-dri libxcb-xfixes0-dev mesa-vulkan-drivers
+      - name: checkout bevy
+        run: |
+          git clone https://github.com/bevyengine/bevy bevy
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Build bevy
+        run: |
+          cd bevy
+          cargo build  --features=x11
+      - name: Run examples
+        run: |
+          for example in .github/example-run/*.ron; do
+            example_name=`basename $example .ron`
+            echo "running $example_name - "`date`
+            time CI_TESTING_CONFIG=$example xvfb-run cargo run --example $example_name --features=x11
+            sleep 10
+          done
