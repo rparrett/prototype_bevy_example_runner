@@ -1,6 +1,8 @@
 use serde_derive::Deserialize;
 use std::io::Write;
 use std::process::Command;
+use std::thread::sleep;
+use std::time::Duration;
 use std::{fs, io};
 
 #[derive(Debug, Deserialize)]
@@ -74,6 +76,10 @@ fn main() {
         };
 
         table_lines.push(format!("|{}|{}|", example.name, status_string));
+
+        // xvfb needs some time to shut down properly, or we get intermittent
+        // failures
+        sleep(Duration::from_secs(10));
     }
 
     std::fs::write("../README.md", table_lines.join("\n")).expect("Failed to write readme");
