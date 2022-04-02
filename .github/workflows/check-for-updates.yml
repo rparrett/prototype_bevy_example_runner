@@ -28,14 +28,10 @@ jobs:
             git commit -m "Set latest commit" latest-commit
             git push github HEAD:meta
 
-            true
+            echo "updates=true" >> $GITHUB_ENV
           else
             echo "No updates"
-            false
+            echo "updates=true" >> $GITHUB_ENV
           fi
-      - if: ${{ success() }}
-        name: Invoke Example Runner
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: Run Examples
-          token: ${{ secrets.PERSONAL_TOKEN }}
+      - if: ${{ env.updates }}
+        uses: ./.github/workflows/run-examples
