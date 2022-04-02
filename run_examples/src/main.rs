@@ -1,4 +1,5 @@
 use serde_derive::Deserialize;
+use std::fs::remove_dir_all;
 use std::io::Write;
 use std::process::Command;
 use std::thread::sleep;
@@ -72,6 +73,10 @@ fn main() {
         println!("{} {:?}", example.name, output.status);
         io::stdout().write_all(&output.stdout).unwrap();
         io::stderr().write_all(&output.stderr).unwrap();
+
+        // mysterious linker errors after a while. disk space thing?
+        remove_dir_all("../bevy/target/debug/examples")
+            .expect("Failed to clean up after ourselves");
 
         let status_string = if output.status.success() {
             ":white_check_mark:".to_string()

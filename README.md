@@ -1,5 +1,9 @@
-## Commit Tested
-0ed08d6 fix multiple_windows example (#4389)
+# Prototype Bevy Example Runner
+Runs as many examples as possible when new commits show up.
+## TODO
+- [] Store results in another branch and host with github pages
+## Last Commit Tested
+648544fa Bump actions/cache from 2 to 3 (#4348)
 
 ## Results 
 |example|status|
