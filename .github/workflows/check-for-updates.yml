@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: meta
       - name: Check for Bevy updates
         run: |
           git clone --bare https://github.com/bevyengine/bevy tmpdir
@@ -33,9 +31,5 @@ jobs:
             echo "No updates"
             echo "updates=true" >> $GITHUB_ENV
           fi
-      - if: ${{ env.updates }}
-        uses: actions/checkout@v3
-        with:
-          ref: main
       - if: ${{ env.updates }}
         uses: ./.github/workflows/run-examples
