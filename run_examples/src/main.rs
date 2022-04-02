@@ -34,7 +34,11 @@ fn main() {
     let decoded: Cargo = toml::from_str(&toml_str).unwrap();
 
     let mut table_lines = vec![];
-    table_lines.push("## Commit Tested".to_string());
+    table_lines.push("# Prototype Bevy Example Runner".to_string());
+    table_lines.push("Runs as many examples as possible when new commits show up.".to_string());
+    table_lines.push("## TODO".to_string());
+    table_lines.push("- [] Store results in another branch and host with github pages".to_string());
+    table_lines.push("## Last Commit Tested".to_string());
     table_lines.push(get_current_commit_string());
     table_lines.push("## Results ".to_string());
     table_lines.push("|example|status|".to_string());
