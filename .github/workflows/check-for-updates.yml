@@ -35,5 +35,7 @@ jobs:
           fi
       - if: ${{ env.updates }}
         uses: actions/checkout@v3
+        with:
+          ref: main
       - if: ${{ env.updates }}
-        uses: ./.github/workflows/run-examples.yml
+        uses: ./.github/workflows/run-examples
