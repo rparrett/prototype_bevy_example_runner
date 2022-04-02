@@ -65,6 +65,10 @@ jobs:
           cd bevy
           git remote add origin https://github.com/bevyengine/bevy
           git pull --depth=1 origin main
+          echo "[profile.dev]" >> Cargo.toml
+          echo "opt-level = 1" >> Cargo.toml
+          echo "[profile.dev.package.\"*\"]" >> Cargo.toml
+          echo "opt-level = 3" >> Cargo.toml
 
           cargo build --features="x11,bevy_ci_testing"
       - if: ${{ env.updates == 'true' }}

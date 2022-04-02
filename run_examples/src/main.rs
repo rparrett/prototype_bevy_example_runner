@@ -44,7 +44,7 @@ fn main() {
     table_lines.push("|example|status|".to_string());
     table_lines.push("|-|-|".to_string());
 
-    for example in decoded.example.iter() {
+    for example in decoded.example.iter().take(5) {
         if ignore.iter().any(|i| example.path.contains(i)) {
             continue;
         }
