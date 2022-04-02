@@ -31,5 +31,6 @@ jobs:
             echo "No updates"
             echo "updates=true" >> $GITHUB_ENV
           fi
+    maybe-run-examples:
       - if: ${{ env.updates }}
         uses: ./.github/workflows/run-examples
