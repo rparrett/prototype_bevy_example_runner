@@ -31,6 +31,55 @@ jobs:
             echo "No updates"
             echo "updates=true" >> $GITHUB_ENV
           fi
-    maybe-run-examples:
       - if: ${{ env.updates }}
-        uses: ./.github/workflows/run-examples
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            bevy/target/debug/build
+            bevy/target/debug/deps
+            bevy/target/debug/incremental
+          key: ${{ runner.os }}-cargo-build-${{ matrix.toolchain }}-${{ hashFiles('**/Cargo.toml') }}
+      - if: ${{ env.updates }}
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - if: ${{ env.updates }}
+        name: Install Bevy dependencies
+        run: |
+          sudo apt-get update;
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install --no-install-recommends -yq \
+            libasound2-dev libudev-dev;
+      - if: ${{ env.updates }}
+        name: install xvfb, llvmpipe and lavapipe
+        run: |
+          sudo apt-get update -y -qq
+          sudo add-apt-repository ppa:oibaf/graphics-drivers -y
+          sudo apt-get update
+          sudo apt install -y xvfb libegl1-mesa libgl1-mesa-dri libxcb-xfixes0-dev mesa-vulkan-drivers
+      - if: ${{ env.updates }}
+        name: Build bevy
+        run: |
+          git init bevy
+          cd bevy
+          git remote add origin https://github.com/bevyengine/bevy
+          git pull --depth=1 origin latest
+
+          cargo build --features="x11,bevy_ci_testing"
+      - if: ${{ env.updates }}
+        name: Run examples
+        run: |
+          cd get_examples
+          cargo run
+
+          cd ..
+
+          git config --local user.email "$(git log --format='%ae' HEAD^!)"
+          git config --local user.name "$(git log --format='%an' HEAD^!)"
+          git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+          git pull github ${GITHUB_REF} --ff-only
+          git commit -m "Update README with latest results" README.md
+          git push github HEAD:${GITHUB_REF}
