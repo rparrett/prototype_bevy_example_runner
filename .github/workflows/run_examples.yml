@@ -29,7 +29,7 @@ jobs:
             echo "No updates"
             echo "updates=false" >> $GITHUB_ENV
           fi
-      - if: ${{ env.updates }}
+      - if: ${{ env.updates == 'true'}}
         uses: actions/cache@v3
         with:
           path: |
@@ -41,24 +41,24 @@ jobs:
             bevy/target/debug/deps
             bevy/target/debug/incremental
           key: ${{ runner.os }}-cargo-build-${{ matrix.toolchain }}-${{ hashFiles('**/Cargo.toml') }}
-      - if: ${{ env.updates }}
+      - if: ${{ env.updates == 'true' }}
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - if: ${{ env.updates }}
+      - if: ${{ env.updates == 'true' }}
         name: Install Bevy dependencies
         run: |
           sudo apt-get update;
           DEBIAN_FRONTEND=noninteractive sudo apt-get install --no-install-recommends -yq \
             libasound2-dev libudev-dev;
-      - if: ${{ env.updates }}
+      - if: ${{ env.updates == 'true' }}
         name: install xvfb, llvmpipe and lavapipe
         run: |
           sudo apt-get update -y -qq
           sudo add-apt-repository ppa:oibaf/graphics-drivers -y
           sudo apt-get update
           sudo apt install -y xvfb libegl1-mesa libgl1-mesa-dri libxcb-xfixes0-dev mesa-vulkan-drivers
-      - if: ${{ env.updates }}
+      - if: ${{ env.updates == 'true' }}
         name: Build bevy
         run: |
           git init bevy
@@ -67,7 +67,7 @@ jobs:
           git pull --depth=1 origin main
 
           cargo build --features="x11,bevy_ci_testing"
-      - if: ${{ env.updates }}
+      - if: ${{ env.updates == 'true' }}
         name: Run examples
         run: |
           cd run_examples
