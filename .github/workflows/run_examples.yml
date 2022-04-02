@@ -27,7 +27,7 @@ jobs:
             echo "updates=true" >> $GITHUB_ENV
           else
             echo "No updates"
-            echo "updates=true" >> $GITHUB_ENV
+            echo "updates=false" >> $GITHUB_ENV
           fi
       - if: ${{ env.updates }}
         uses: actions/cache@v3
