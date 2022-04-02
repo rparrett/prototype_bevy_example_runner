@@ -70,7 +70,7 @@ jobs:
       - if: ${{ env.updates }}
         name: Run examples
         run: |
-          cd get_examples
+          cd run_examples
           cargo run
 
           cd ..
