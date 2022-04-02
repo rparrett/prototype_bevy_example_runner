@@ -13,15 +13,15 @@ jobs:
         run: |
           git clone --bare https://github.com/bevyengine/bevy tmpdir
           cd tmpdir
-          if ! git rev-parse HEAD | grep -q `cat ../latest-commit`; then
-            git rev-parse HEAD > ../latest-commit
+          if ! git rev-parse HEAD | grep -q `cat ../.latest-commit`; then
+            git rev-parse HEAD > ../.latest-commit
 
             cd ..
             git config --local user.email "$(git log --format='%ae' HEAD^!)"
             git config --local user.name "$(git log --format='%an' HEAD^!)"
             git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
             git pull github meta --ff-only
-            git commit -m "Set latest commit" latest-commit
+            git commit -m "Set latest commit" .latest-commit
             git push github HEAD:meta
 
             echo "updates=true" >> $GITHUB_ENV
