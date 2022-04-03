@@ -3,7 +3,7 @@ Runs as many examples as possible when new commits show up.
 ## TODO
 - [ ] Store results in another branch and host with github pages
 ## Last Commit Tested
-ac29cbe add support for loading animations in `scene_viewer` example (#4403)
+28d0a40 Only enable mouse movement when pressed in scene_viewer (#4405)
 
 ## Results 
 |example|status|
