@@ -3,7 +3,7 @@ Runs as many examples as possible when new commits show up.
 ## TODO
 - [ ] Store results in another branch and host with github pages
 ## Last Commit Tested
-449a1d2 animation player (#4375)
+f90da74 Remove `face_toward.rs` (#4277)
 
 ## Results 
 |example|status|
