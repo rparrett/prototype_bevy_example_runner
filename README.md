@@ -3,7 +3,7 @@ Runs as many examples as possible when new commits show up.
 ## TODO
 - [ ] Store results in another branch and host with github pages
 ## Last Commit Tested
-0ed08d6 fix multiple_windows example (#4389)
+449a1d2 animation player (#4375)
 
 ## Results 
 |example|status|
@@ -24,7 +24,6 @@ Runs as many examples as possible when new commits show up.
 |3d_scene|:white_check_mark:|
 |lighting|:white_check_mark:|
 |load_gltf|:white_check_mark:|
-|manual_gltf_animation_player|:white_check_mark:|
 |many_cubes|:white_check_mark:|
 |msaa|:white_check_mark:|
 |orthographic|:white_check_mark:|
@@ -37,6 +36,7 @@ Runs as many examples as possible when new commits show up.
 |render_to_texture|:white_check_mark:|
 |update_gltf_scene|:white_check_mark:|
 |wireframe|:white_check_mark:|
+|animated_fox|:white_check_mark:|
 |custom_skinned_mesh|:white_check_mark:|
 |gltf_skinned_mesh|:white_check_mark:|
 |drag_and_drop|:white_check_mark:|
