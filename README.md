@@ -3,7 +3,7 @@ Runs as many examples as possible when new commits show up.
 ## TODO
 - [ ] Store results in another branch and host with github pages
 ## Last Commit Tested
-f90da74 Remove `face_toward.rs` (#4277)
+ac29cbe add support for loading animations in `scene_viewer` example (#4403)
 
 ## Results 
 |example|status|
