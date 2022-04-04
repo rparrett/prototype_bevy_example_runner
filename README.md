@@ -3,7 +3,7 @@ Runs as many examples as possible when new commits show up.
 ## TODO
 - [ ] Store results in another branch and host with github pages
 ## Last Commit Tested
-99a2dc5 Cleanup some outdated parts of ecs_guide (#4342)
+cf831d5 input clear should not clear pressed (#4418)
 
 ## Results 
 |example|status|
