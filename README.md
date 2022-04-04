@@ -3,7 +3,7 @@ Runs as many examples as possible when new commits show up.
 ## TODO
 - [ ] Store results in another branch and host with github pages
 ## Last Commit Tested
-703ae5d gltf: add a name to nodes without names (#4396)
+99a2dc5 Cleanup some outdated parts of ecs_guide (#4342)
 
 ## Results 
 |example|status|
