@@ -3,7 +3,7 @@ Runs as many examples as possible when new commits show up.
 ## TODO
 - [ ] Store results in another branch and host with github pages
 ## Last Commit Tested
-cf831d5 input clear should not clear pressed (#4418)
+dbb2fcb Re-enable test_property_type_registration() (#4419)
 
 ## Results 
 |example|status|
