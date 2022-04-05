@@ -3,7 +3,7 @@ Runs as many examples as possible when new commits show up.
 ## TODO
 - [ ] Store results in another branch and host with github pages
 ## Last Commit Tested
-dbb2fcb Re-enable test_property_type_registration() (#4419)
+7e3637c fix scene_viewer example on wasm (#4426)
 
 ## Results 
 |example|status|
@@ -48,7 +48,7 @@ dbb2fcb Re-enable test_property_type_registration() (#4419)
 |plugin_group|:white_check_mark:|
 |return_after_run|:white_check_mark:|
 |thread_pool_resources|:white_check_mark:|
-|headless_defaults|:x: (Code 101)|
+|headless_defaults|:white_check_mark:|
 |without_winit|:white_check_mark:|
 |asset_loading|:white_check_mark:|
 |custom_asset|:white_check_mark:|
