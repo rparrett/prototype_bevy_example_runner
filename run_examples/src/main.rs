@@ -1,4 +1,6 @@
+use metadata::*;
 use serde_derive::Deserialize;
+use std::collections::VecDeque;
 use std::fs::remove_dir_all;
 use std::io::Write;
 use std::process::Command;
@@ -17,34 +19,32 @@ struct Cargo {
     example: Vec<Example>,
 }
 
-fn get_current_commit_string() -> String {
+fn get_current_commit() -> (String, String) {
     let output = Command::new("git")
-        .current_dir(std::fs::canonicalize("../bevy").unwrap())
-        .args(["log", "--oneline", "-n", "1"])
+        .current_dir(std::fs::canonicalize("./bevy").unwrap())
+        .args(["log", "--pretty=oneline", "-n", "1"])
         .output()
         .expect("failed to execute process");
 
-    String::from_utf8(output.stdout).expect("Failed to parse git output")
+    let stdout = String::from_utf8(output.stdout).expect("Failed to parse git output");
+
+    let split = stdout.split_once(' ').unwrap();
+
+    (split.0.to_string(), split.1.to_string())
 }
 
 fn main() {
     let ignore = ["android", "custom_loop"];
 
-    let toml_str = fs::read_to_string("../bevy/Cargo.toml").unwrap();
+    let toml_str = fs::read_to_string("./bevy/Cargo.toml").unwrap();
 
     let decoded: Cargo = toml::from_str(&toml_str).unwrap();
 
-    let mut table_lines = vec![];
-    table_lines.push("# Prototype Bevy Example Runner".to_string());
-    table_lines.push("Runs as many examples as possible when new commits show up.".to_string());
-    table_lines.push("## TODO".to_string());
-    table_lines
-        .push("- [ ] Store results in another branch and host with github pages".to_string());
-    table_lines.push("## Last Commit Tested".to_string());
-    table_lines.push(get_current_commit_string());
-    table_lines.push("## Results ".to_string());
-    table_lines.push("|example|status|".to_string());
-    table_lines.push("|-|-|".to_string());
+    let mut run = Run::default();
+
+    let commit = get_current_commit();
+    run.commit_hash = commit.0;
+    run.commit_message = commit.1;
 
     for example in decoded.example.iter() {
         if ignore.iter().any(|i| example.path.contains(i)) {
@@ -58,39 +58,48 @@ fn main() {
             "../config/default.ron".to_string()
         };
 
-        let output = Command::new("xvfb-run")
-            .current_dir(std::fs::canonicalize("../bevy").unwrap())
+        let xvfb = false;
+
+        let mut args = VecDeque::from([
+            "run",
+            "--example",
+            &example.name,
+            "--features=x11,bevy_ci_testing",
+        ]);
+        if xvfb {
+            args.push_front("cargo");
+        }
+        let command = if xvfb { "xvfb-run" } else { "cargo" };
+
+        let output = Command::new(command)
+            .current_dir(std::fs::canonicalize("./bevy").unwrap())
             .env("CI_TESTING_CONFIG", config)
-            .args([
-                "cargo",
-                "run",
-                "--example",
-                &example.name,
-                "--features=x11,bevy_ci_testing",
-            ])
+            .args(args)
             .output()
-            .expect("failed to execute process");
+            .expect(&format!("failed to execute {}", command));
 
         println!("{} {:?}", example.name, output.status);
+
         io::stdout().write_all(&output.stdout).unwrap();
         io::stderr().write_all(&output.stderr).unwrap();
 
-        // mysterious linker errors after a while. disk space thing?
-        remove_dir_all("../bevy/target/debug/examples")
-            .expect("Failed to clean up after ourselves");
+        // Mysterious linker errors after 30 or so examples run. I suspect this is a disk space thing,
+        // because if we clean up after ourselves, the issue seems to go away.
+        remove_dir_all("./bevy/target/debug/examples").expect("Failed to clean up after ourselves");
 
-        let status_string = if output.status.success() {
-            ":white_check_mark:".to_string()
-        } else {
-            format!(":x: (Code {})", output.status.code().unwrap())
-        };
-
-        table_lines.push(format!("|{}|{}|", example.name, status_string));
+        run.results.insert(
+            example.name.clone(),
+            ExampleResult {
+                code: output.status.code().unwrap(),
+                stdout: String::from_utf8(output.stdout.into()).unwrap_or_else(|_| "".to_string()),
+                stderr: String::from_utf8(output.stderr.into()).unwrap_or_else(|_| "".to_string()),
+            },
+        );
 
         // xvfb needs some time to shut down properly, or we get intermittent
         // failures
         sleep(Duration::from_secs(10));
     }
 
-    std::fs::write("../README.md", table_lines.join("\n")).expect("Failed to write readme");
+    run.save().unwrap();
 }

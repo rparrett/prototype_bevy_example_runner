@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <style>
+            th {
+                writing-mode: vertical-rl;
+                transform: rotate(-180deg);
+                text-align: left;
+            }
+            table { border-collapse: collapse; }
+            td, th {
+                border: 1px solid black;
+                padding: 5px;
+            }
+            .no-border { border: 0px; }
+            .success { background-color: rgb(92, 190, 92); }
+            .failure { background-color: rgb(255, 109, 109); }
+        </style>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <tr>
+                    <th class="no-border"></th>
+                    {% for run in runs %}
+                    <th><a href="https://github.com/bevyengine/bevy/commit/{{ run.commit_hash }}">{{ run.commit_hash }}</a><br/>{{ run.commit_message }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for example in examples %}
+                <tr>
+                    <td>{{ example }}</td>
+                    {% for run in runs %}
+                    <td>
+                        {% if run.results[example] %}
+                            {% if run.results[example].code == 0 %}
+                            &#x2705;
+                            {% else %}
+                            &#x274C;({{ run.results[example].code }})
+                            {% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>

@@ -4,32 +4,45 @@ on:
   schedule:
     - cron: "0 * * * *"
   workflow_dispatch:
+    inputs:
+      force:
+        type: boolean
+        description: Force
 jobs:
   check-for-updates:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+      - uses: actions/checkout@v3
+        with:
+          ref: "github-pages"
+          path: "github-pages"
       - name: Check for Bevy updates
         run: |
           git clone --bare https://github.com/bevyengine/bevy tmpdir
           cd tmpdir
-          if ! git rev-parse HEAD | grep -q `cat ../.latest-commit`; then
-            git rev-parse HEAD > ../.latest-commit
+          if ! git rev-parse HEAD | grep -q `cat ../github-pages/.latest-commit`; then
+            git rev-parse HEAD > ../github-pages/.latest-commit
 
-            cd ..
+            cd ../github-pages
             git config --local user.email "$(git log --format='%ae' HEAD^!)"
             git config --local user.name "$(git log --format='%an' HEAD^!)"
-            git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
-            git pull github ${GITHUB_REF} --ff-only
+            git add .latest-commit
             git commit -m "Set latest commit" .latest-commit
-            git push github HEAD:${GITHUB_REF}
+            git push
+            cd ..
 
             echo "updates=true" >> $GITHUB_ENV
           else
             echo "No updates"
             echo "updates=false" >> $GITHUB_ENV
           fi
-      - if: ${{ env.updates == 'true'}}
+      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true'}}
         uses: actions/cache@v3
         with:
           path: |
@@ -41,24 +54,20 @@ jobs:
             bevy/target/debug/deps
             bevy/target/debug/incremental
           key: ${{ runner.os }}-cargo-build-${{ matrix.toolchain }}-${{ hashFiles('**/Cargo.toml') }}
-      - if: ${{ env.updates == 'true' }}
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - if: ${{ env.updates == 'true' }}
+      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
         name: Install Bevy dependencies
         run: |
           sudo apt-get update;
           DEBIAN_FRONTEND=noninteractive sudo apt-get install --no-install-recommends -yq \
             libasound2-dev libudev-dev;
-      - if: ${{ env.updates == 'true' }}
+      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
         name: install xvfb, llvmpipe and lavapipe
         run: |
           sudo apt-get update -y -qq
           sudo add-apt-repository ppa:oibaf/graphics-drivers -y
           sudo apt-get update
           sudo apt install -y xvfb libegl1-mesa libgl1-mesa-dri libxcb-xfixes0-dev mesa-vulkan-drivers
-      - if: ${{ env.updates == 'true' }}
+      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
         name: Build bevy
         run: |
           git init bevy
@@ -71,14 +80,27 @@ jobs:
           echo "opt-level = 3" >> Cargo.toml
 
           cargo build --features="x11,bevy_ci_testing"
-      - if: ${{ env.updates == 'true' }}
+      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
         name: Run examples
         run: |
-          cd run_examples
-          cargo run
-
-          cd ..
-
-          git pull github ${GITHUB_REF} --ff-only
-          git commit -m "Update README with latest results" README.md
-          git push github HEAD:${GITHUB_REF}
+          cargo run --bin run_examples
+      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
+        name: Build website
+        run: |
+          ls -l
+          ls -l github-pages
+          ls -l github-pages/results
+          cp github-pages/results/*.json results/ || true
+          cargo run --bin build_website
+      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
+        name: Publish results
+        run: |
+          mv index.html github-pages/
+          cp results/*.json github-pages/results/
+          cd github-pages
+          git config --local user.email "$(git log --format='%ae' HEAD^!)"
+          git config --local user.name "$(git log --format='%an' HEAD^!)"
+          git add results
+          git add index.html
+          git commit -m "Update with latest results"
+          git push

@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+    "metadata",
+    "run_examples",
+    "build_website"
+]
+exclude = ["bevy"]
