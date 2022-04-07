@@ -46,6 +46,7 @@ fn main() {
     run.commit_hash = commit.0;
     run.commit_message = commit.1;
 
+    // TODO cli arg for .take(n)
     for example in decoded.example.iter() {
         if ignore.iter().any(|i| example.path.contains(i)) {
             continue;
@@ -58,7 +59,8 @@ fn main() {
             "../config/default.ron".to_string()
         };
 
-        let xvfb = false;
+        // TODO cli arg
+        let xvfb = true;
 
         let mut args = VecDeque::from([
             "run",
