@@ -82,7 +82,7 @@ jobs:
       - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
         name: Run examples
         run: |
-          cargo run --bin run_examples
+          cargo run --bin run_examples -- --xvfb
       - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
         name: Build website
         run: |

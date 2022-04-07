@@ -1,3 +1,4 @@
+use clap::Parser;
 use metadata::*;
 use serde_derive::Deserialize;
 use std::collections::VecDeque;
@@ -19,6 +20,14 @@ struct Cargo {
     example: Vec<Example>,
 }
 
+#[derive(Parser, Debug)]
+struct Args {
+    #[clap(long)]
+    xvfb: bool,
+    #[clap(short, long)]
+    num_examples: Option<usize>,
+}
+
 fn get_current_commit() -> (String, String) {
     let output = Command::new("git")
         .current_dir(std::fs::canonicalize("./bevy").unwrap())
@@ -34,6 +43,8 @@ fn get_current_commit() -> (String, String) {
 }
 
 fn main() {
+    let args = Args::parse();
+
     let ignore = ["android", "custom_loop"];
 
     let toml_str = fs::read_to_string("./bevy/Cargo.toml").unwrap();
@@ -46,7 +57,8 @@ fn main() {
     run.commit_hash = commit.0;
     run.commit_message = commit.1;
 
-    // TODO cli arg for .take(n)
+    let mut n = 0;
+
     for example in decoded.example.iter() {
         if ignore.iter().any(|i| example.path.contains(i)) {
             continue;
@@ -59,24 +71,21 @@ fn main() {
             "../config/default.ron".to_string()
         };
 
-        // TODO cli arg
-        let xvfb = true;
-
-        let mut args = VecDeque::from([
+        let mut cmd_args = VecDeque::from([
             "run",
             "--example",
             &example.name,
             "--features=x11,bevy_ci_testing",
         ]);
-        if xvfb {
-            args.push_front("cargo");
+        if args.xvfb {
+            cmd_args.push_front("cargo");
         }
-        let command = if xvfb { "xvfb-run" } else { "cargo" };
+        let command = if args.xvfb { "xvfb-run" } else { "cargo" };
 
         let output = Command::new(command)
             .current_dir(std::fs::canonicalize("./bevy").unwrap())
             .env("CI_TESTING_CONFIG", config)
-            .args(args)
+            .args(cmd_args)
             .output()
             .expect(&format!("failed to execute {}", command));
 
@@ -101,6 +110,14 @@ fn main() {
         // xvfb needs some time to shut down properly, or we get intermittent
         // failures
         sleep(Duration::from_secs(10));
+
+        n += 1;
+
+        if let Some(num) = args.num_examples {
+            if n >= num {
+                break;
+            }
+        }
     }
 
     run.save().unwrap();
