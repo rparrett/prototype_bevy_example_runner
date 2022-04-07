@@ -5,3 +5,12 @@ Runs as many examples as possible when new commits show up to catch runtime pani
 Maybe one day this will be able to pipe input into examples and/or pipe screen captures out.
 
 [Dashboard Hosted on Github Pages](https://rparrett.github.io/prototype_bevy_example_runner)
+
+## TODO
+
+Contributions are welcome
+
+- [ ] Add summary of latest run to top of page
+- [ ] Allow cli args to be sent to specific examples
+- [ ] Link to workflow run if possible
+- [ ] Make column headers readable somehow
