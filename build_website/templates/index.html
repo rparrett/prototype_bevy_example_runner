@@ -1,6 +1,10 @@
 <html>
     <head>
         <style>
+            html { font-family: monospace }
+
+            a { text-decoration: none; }
+
             th {
                 writing-mode: vertical-rl;
                 transform: rotate(-180deg);
@@ -12,8 +16,10 @@
                 padding: 5px;
             }
             .no-border { border: 0px; }
-            .success { background-color: rgb(92, 190, 92); }
-            .failure { background-color: rgb(255, 109, 109); }
+
+            .summary { background-color: #333; color: #ddd; }
+            .summary.good { color: rgb(92, 190, 92); }
+            .summary.bad { color: rgb(255, 109, 109); }
         </style>
     </head>
     <body>
@@ -27,6 +33,12 @@
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <td class="no-border"></td>
+                    {% for run in runs %}
+                    <td class="summary {% if num_fails[loop.index0] == 0 %}good{% else %}bad{% endif %}">{{ num_fails[loop.index0] }} failed</td>
+                    {% endfor %}
+                </tr>
                 {% for example in examples %}
                 <tr>
                     <td>{{ example }}</td>
