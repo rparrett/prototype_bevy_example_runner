@@ -6,9 +6,9 @@
             a { text-decoration: none; }
 
             th {
-                writing-mode: vertical-rl;
-                transform: rotate(-180deg);
-                text-align: left;
+                max-width: 5rem;
+                max-height: 8rem;
+                overflow: hidden;
             }
             table { border-collapse: collapse; }
             td, th {
@@ -35,7 +35,7 @@
                 <tr>
                     <th class="no-border"></th>
                     {% for run in runs %}
-                    <th><a href="https://github.com/bevyengine/bevy/commit/{{ run.commit_hash }}">{{ run.commit_hash }}</a><br/>{{ run.commit_message }}</th>
+                    <th><a href="https://github.com/bevyengine/bevy/commit/{{ run.commit_hash }}">{{ run.commit_hash | truncate(length=7, end="") }}</a><br/>{{ run.commit_message }}</th>
                     {% endfor %}
                 </tr>
             </thead>
