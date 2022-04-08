@@ -12,3 +12,4 @@ Contributions are welcome
 
 - [ ] Allow cli args to be sent to specific examples
 - [ ] Link to workflow run if possible
+- [ ] Run additional "examples" from an external repo?
