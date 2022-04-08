@@ -10,7 +10,5 @@ Maybe one day this will be able to pipe input into examples and/or pipe screen c
 
 Contributions are welcome
 
-- [ ] Add summary of latest run to top of page
 - [ ] Allow cli args to be sent to specific examples
 - [ ] Link to workflow run if possible
-- [ ] Make column headers readable somehow
