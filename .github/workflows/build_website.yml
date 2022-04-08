@@ -14,6 +14,7 @@ jobs:
           path: "github-pages"
       - name: Build website
         run: |
+          cp -R github-pages/results results
           cargo run --bin build_website
       - name: Publish results
         run: |
