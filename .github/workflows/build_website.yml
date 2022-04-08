@@ -12,12 +12,10 @@ jobs:
         with:
           ref: "github-pages"
           path: "github-pages"
-      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
-        name: Build website
+      - name: Build website
         run: |
           cargo run --bin build_website
-      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
-        name: Publish results
+      - name: Publish results
         run: |
           mv index.html github-pages/
           cd github-pages
