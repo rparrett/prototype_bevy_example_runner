@@ -21,7 +21,6 @@ jobs:
           cd github-pages
           git config --local user.email "$(git log --format='%ae' HEAD^!)"
           git config --local user.name "$(git log --format='%an' HEAD^!)"
-          git add results
           git add index.html
           git commit -m "Re-build website"
           git push
