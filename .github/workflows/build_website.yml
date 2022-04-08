@@ -1,0 +1,29 @@
+name: Build Website
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          ref: "github-pages"
+          path: "github-pages"
+      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
+        name: Build website
+        run: |
+          cargo run --bin build_website
+      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
+        name: Publish results
+        run: |
+          mv index.html github-pages/
+          cd github-pages
+          git config --local user.email "$(git log --format='%ae' HEAD^!)"
+          git config --local user.name "$(git log --format='%an' HEAD^!)"
+          git add results
+          git add index.html
+          git commit -m "Re-build website"
+          git push
