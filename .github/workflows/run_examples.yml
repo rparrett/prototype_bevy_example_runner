@@ -86,9 +86,6 @@ jobs:
       - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
         name: Build website
         run: |
-          ls -l
-          ls -l github-pages
-          ls -l github-pages/results
           cp github-pages/results/*.json results/ || true
           cargo run --bin build_website
       - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
