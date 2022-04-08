@@ -25,7 +25,7 @@ struct Args {
     #[clap(long)]
     xvfb: bool,
     #[clap(short, long)]
-    num_examples: Option<usize>,
+    num: Option<usize>,
 }
 
 fn get_current_commit() -> (String, String) {
@@ -72,22 +72,22 @@ fn main() {
         };
 
         let mut cmd_args = VecDeque::from([
+            "cargo",
             "run",
             "--example",
             &example.name,
             "--features=x11,bevy_ci_testing",
         ]);
         if args.xvfb {
-            cmd_args.push_front("cargo");
+            cmd_args.push_front("xvfb-run");
         }
-        let command = if args.xvfb { "xvfb-run" } else { "cargo" };
 
-        let output = Command::new(command)
+        let output = Command::new(&cmd_args[0])
             .current_dir(std::fs::canonicalize("./bevy").unwrap())
             .env("CI_TESTING_CONFIG", config)
-            .args(cmd_args)
+            .args(cmd_args.range(1..))
             .output()
-            .expect(&format!("failed to execute {}", command));
+            .expect(&format!("failed to execute {}", &cmd_args[0]));
 
         println!("{} {:?}", example.name, output.status);
 
@@ -113,7 +113,7 @@ fn main() {
 
         n += 1;
 
-        if let Some(num) = args.num_examples {
+        if let Some(num) = args.num {
             if n >= num {
                 break;
             }
