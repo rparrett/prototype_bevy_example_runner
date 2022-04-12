@@ -42,7 +42,7 @@ pub fn load(num: usize) -> Vec<Run> {
         .collect();
 
     // sort by newest first
-    paths.sort_by(|a, b| a.cmp(&b));
+    paths.sort_by(|a, b| b.cmp(&a));
 
     paths
         .iter()
