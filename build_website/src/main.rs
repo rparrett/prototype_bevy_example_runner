@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use tera::{Context, Tera};
 
 fn main() {
-    let runs = metadata::load(10);
+    let runs = metadata::load(30);
 
     let mut num_fails = vec![];
 

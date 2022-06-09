@@ -27,6 +27,11 @@
                 top: 5px;
                 right: 5px;
             }
+
+            thead tr th div, .vertical {
+                writing-mode: vertical-rl;
+                transform: rotate(180deg);
+            }
         </style>
     </head>
     <body>
@@ -35,22 +40,18 @@
             <thead>
                 <tr>
                     <th class="no-border"></th>
-                    {% for run in runs %}
-                    <th><a href="https://github.com/bevyengine/bevy/commit/{{ run.commit_hash }}">{{ run.commit_hash | truncate(length=7, end="") }}</a><br/>{{ run.commit_message }}</th>
+                    <th class="no-border"></th>
+                    {% for example in examples %}
+                    <th><div class="vertical">{{ example }}</div></th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
+                {% for run in runs %}
                 <tr>
-                    <td class="no-border"></td>
-                    {% for run in runs %}
+                    <td><a href="https://github.com/bevyengine/bevy/commit/{{ run.commit_hash }}">{{ run.commit_hash | truncate(length=7, end="") }}</a><br/>{{ run.commit_message }}</td>
                     <td class="summary {% if num_fails[loop.index0] == 0 %}good{% else %}bad{% endif %}">{{ num_fails[loop.index0] }} failed</td>
-                    {% endfor %}
-                </tr>
-                {% for example in examples %}
-                <tr>
-                    <td>{{ example }}</td>
-                    {% for run in runs %}
+                    {% for example in examples %}
                     <td>
                         {% if run.results[example] %}
                             {% if run.results[example].code == 0 %}
