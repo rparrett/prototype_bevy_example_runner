@@ -13,6 +13,8 @@ use std::{fs, io};
 struct Example {
     name: String,
     path: String,
+    #[serde(rename = "required-features")]
+    required_features: Option<Vec<String>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -71,13 +73,14 @@ fn main() {
             "../config/default.ron".to_string()
         };
 
-        let mut cmd_args = VecDeque::from([
-            "cargo",
-            "run",
-            "--example",
-            &example.name,
-            "--features=x11,bevy_ci_testing",
-        ]);
+        let mut features = vec!["x11", "bevy_ci_testing"];
+        if let Some(required) = &example.required_features {
+            features.extend(required.iter().map(|s| s.as_str()));
+        }
+        let features_arg = format!("--features={}", features.join(","));
+
+        let mut cmd_args =
+            VecDeque::from(["cargo", "run", "--example", &example.name, &features_arg]);
         if args.xvfb {
             cmd_args.push_front("xvfb-run");
         }
