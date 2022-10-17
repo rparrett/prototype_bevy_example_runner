@@ -33,5 +33,7 @@ fn main() {
     )
     .unwrap();
 
-    std::fs::write("index.html", &rendered).unwrap();
+    std::fs::create_dir_all("./out").unwrap();
+
+    std::fs::write("./out/index.html", &rendered).unwrap();
 }

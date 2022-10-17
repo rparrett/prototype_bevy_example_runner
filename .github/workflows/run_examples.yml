@@ -9,39 +9,59 @@ on:
         type: boolean
         description: Force
 jobs:
-  check-for-updates:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      updated: ${{ steps.compare-commit.outputs.updated }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: "workflow-status"
+          path: "workflow-status"
+      - uses: actions/checkout@v3
+        with:
+          repository: "bevyengine/bevy"
+          path: "bevy"
+          fetch-depth: 0
+      - name: Check for Bevy updates
+        id: compare-commit
+        run: |
+          cd bevy
+          if ! git rev-parse HEAD | grep -q `cat ../workflow-status/latest-commit`; then
+            git rev-parse HEAD > ../workflow-status/latest-commit
+            cd ../workflow-status
+
+            git config user.name 'Workflow'
+            git config user.email '<>'
+
+            git add latest-commit
+            git commit --amend -m "Update Latest Commit"
+            git push --force
+
+            echo "updated=true" >> $GITHUB_OUTPUT
+          else
+            echo "No updates"
+            echo "updated=false" >> $GITHUB_OUTPUT
+          fi
+  run-examples:
+    needs: check
+    if: ${{ needs.check.outputs.updated == 'true' || github.event.inputs.force == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/checkout@v3
         with:
-          ref: "github-pages"
-          path: "github-pages"
-      - name: Check for Bevy updates
-        run: |
-          git clone --bare https://github.com/bevyengine/bevy tmpdir
-          cd tmpdir
-          if ! git rev-parse HEAD | grep -q `cat ../github-pages/.latest-commit`; then
-            git rev-parse HEAD > ../github-pages/.latest-commit
-
-            cd ../github-pages
-            git config --local user.email "$(git log --format='%ae' HEAD^!)"
-            git config --local user.name "$(git log --format='%an' HEAD^!)"
-            git add .latest-commit
-            git commit -m "Set latest commit" .latest-commit
-            git push
-            cd ..
-
-            echo "updates=true" >> $GITHUB_ENV
-          else
-            echo "No updates"
-            echo "updates=false" >> $GITHUB_ENV
-          fi
-      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
+          ref: "results"
+          path: "results"
+      - uses: actions/checkout@v3
+        with:
+          repository: "bevyengine/bevy"
+          path: "bevy"
+      - name: Download rust toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true'}}
+      - name: Cache
         uses: actions/cache@v3
         with:
           path: |
@@ -53,50 +73,42 @@ jobs:
             bevy/target/debug/deps
             bevy/target/debug/incremental
           key: ${{ runner.os }}-cargo-build-${{ matrix.toolchain }}-${{ hashFiles('**/Cargo.toml') }}
-      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
-        name: Install Bevy dependencies
+      - name: Install Bevy dependencies
         run: |
           sudo apt-get update;
           DEBIAN_FRONTEND=noninteractive sudo apt-get install --no-install-recommends -yq \
             libasound2-dev libudev-dev;
-      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
-        name: install xvfb, llvmpipe and lavapipe
+      - name: Install xvfb, llvmpipe and lavapipe
         run: |
           sudo apt-get update -y -qq
           sudo add-apt-repository ppa:oibaf/graphics-drivers -y
           sudo apt-get update
           sudo apt install -y xvfb libegl1-mesa libgl1-mesa-dri libxcb-xfixes0-dev mesa-vulkan-drivers
-      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
-        name: Build bevy
+      - name: Build bevy
         run: |
-          git init bevy
           cd bevy
-          git remote add origin https://github.com/bevyengine/bevy
-          git pull --depth=1 origin main
+
+          echo "" >> Cargo.toml
           echo "[profile.dev]" >> Cargo.toml
           echo "opt-level = 1" >> Cargo.toml
           echo "[profile.dev.package.\"*\"]" >> Cargo.toml
           echo "opt-level = 3" >> Cargo.toml
 
           cargo build --features="x11,bevy_ci_testing"
-      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
-        name: Run examples
+      - name: Run examples
         run: |
-          cargo run --bin run_examples -- --xvfb
-      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
-        name: Build website
+          cargo run --bin run_examples -- --xvfb --num 1
+      - name: Store results
         run: |
-          cp github-pages/results/*.json results/ || true
-          cargo run --bin build_website
-      - if: ${{ env.updates == 'true' || github.event.inputs.force == 'true' }}
-        name: Publish results
-        run: |
-          mv index.html github-pages/
-          cp results/*.json github-pages/results/
-          cd github-pages
-          git config --local user.email "$(git log --format='%ae' HEAD^!)"
-          git config --local user.name "$(git log --format='%an' HEAD^!)"
-          git add results
-          git add index.html
-          git commit -m "Update with latest results"
+          cd results
+
+          git config user.name 'Workflow'
+          git config user.email '<>'
+
+          git add .
+          git commit -m "Update Results"
           git push
+  build-website:
+    needs: run-examples
+    if: ${{ needs.check.outputs.updated == 'true' || github.event.inputs.force == 'true' }}
+    uses: ./.github/workflows/build_website.yml
