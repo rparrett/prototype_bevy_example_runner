@@ -97,7 +97,7 @@ jobs:
           cargo build --features="x11,bevy_ci_testing"
       - name: Run examples
         run: |
-          cargo run --bin run_examples -- --xvfb --num 1
+          cargo run --bin run_examples -- --xvfb
       - name: Store results
         run: |
           cd results
