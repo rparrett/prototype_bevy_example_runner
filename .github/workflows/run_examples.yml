@@ -99,6 +99,7 @@ jobs:
         run: |
           cargo run --bin run_examples -- --xvfb
       - name: Archive xvfb log
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: xvfb-log
