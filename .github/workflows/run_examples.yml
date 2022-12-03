@@ -103,7 +103,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: xvfb-log
-          path: xvfb.log
+          path: bevy/xvfb.log
       - name: Store results
         run: |
           cd results
