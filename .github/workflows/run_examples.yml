@@ -98,6 +98,11 @@ jobs:
       - name: Run examples
         run: |
           cargo run --bin run_examples -- --xvfb
+      - name: Archive xvfb log
+        uses: actions/upload-artifact@v3
+        with:
+          name: xvfb-log
+          path: xvfb.log
       - name: Store results
         run: |
           cd results

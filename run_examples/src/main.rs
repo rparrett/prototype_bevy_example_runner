@@ -82,6 +82,8 @@ fn main() {
         let mut cmd_args =
             VecDeque::from(["cargo", "run", "--example", &example.name, &features_arg]);
         if args.xvfb {
+            cmd_args.push_front("xvfb.log");
+            cmd_args.push_front("-e");
             cmd_args.push_front("xvfb-run");
         }
 
