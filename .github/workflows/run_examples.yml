@@ -1,5 +1,10 @@
 name: Run Examples
 
+# fix xvfb with ubuntu 22
+# see https://gitlab.freedesktop.org/mesa/mesa/-/issues/7819
+env:
+  LIBGL_ALWAYS_SOFTWARE: true
+
 on:
   schedule:
     - cron: "0 */4 * * *"
