@@ -8,12 +8,14 @@ on:
       force:
         type: boolean
         description: Force
+
+env:
+  LIBGL_ALWAYS_SOFTWARE: true
+  GALLIUM_DRIVER: llvmpipe
+
 jobs:
   check:
     runs-on: ubuntu-latest
-    env:
-      LIBGL_ALWAYS_SOFTWARE: true
-      GALLIUM_DRIVER: llvmpipe
     outputs:
       updated: ${{ steps.compare-commit.outputs.updated }}
     steps:
