@@ -11,7 +11,6 @@ on:
 
 env:
   LIBGL_ALWAYS_SOFTWARE: true
-  GALLIUM_DRIVER: llvmpipe
 
 jobs:
   check:
