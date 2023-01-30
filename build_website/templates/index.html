@@ -44,7 +44,7 @@
                 <tr>
                     <th class="no-border"></th>
                     <th class="no-border"></th>
-                    {% for example in examples %}
+                    {% for example in all_examples %}
                     <th><div class="vertical">{{ example }}</div></th>
                     {% endfor %}
                 </tr>
@@ -52,15 +52,18 @@
             <tbody>
                 {% for run in runs %}
                 <tr>
-                    <td><a href="https://github.com/bevyengine/bevy/commit/{{ run.commit_hash }}">{{ run.commit_hash | truncate(length=7, end="") }}</a><br/>{{ run.commit_message }}</td>
+                    <td><a href="https://github.com/bevyengine/bevy/commit/{{ run.commit_hash }}">{{ run.commit_hash|truncate(length=7, end="") }}</a><br/>{{ run.commit_message }}</td>
                     <td class="summary {% if num_fails[loop.index0] == 0 %}good{% else %}bad{% endif %}">{{ num_fails[loop.index0] }} failed</td>
-                    {% for example in examples %}
+                    {% for example in all_examples %}
                     <td>
                         {% if run.results[example] %}
-                            {% if run.results[example].code == 0 %}
+                            {% set failure_type = run.results[example] | failure_type %}
+                            {% if failure_type == "None" %}
                             &#x2705;
+                            {% elif failure_type == "Run" %}
+                            &#x1f534;
                             {% else %}
-                            &#x274C;({{ run.results[example].code }})
+                            &#x274C;
                             {% endif %}
                         {% else %}
                             -
