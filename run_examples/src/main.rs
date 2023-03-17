@@ -85,12 +85,12 @@ fn main() {
             cmd_args.push_front("xvfb-run");
         }
 
-        let output = Command::new(&cmd_args[0])
+        let output = Command::new(cmd_args[0])
             .current_dir(std::fs::canonicalize("./bevy").unwrap())
             .env("CI_TESTING_CONFIG", config)
             .args(cmd_args.range(1..))
             .output()
-            .expect(&format!("failed to execute {}", &cmd_args[0]));
+            .unwrap_or_else(|_| panic!("failed to execute {}", &cmd_args[0]));
 
         println!("{} {:?}", example.name, output.status);
 
@@ -105,8 +105,8 @@ fn main() {
             example.name.clone(),
             ExampleResult {
                 code: output.status.code().unwrap(),
-                stdout: String::from_utf8(output.stdout.into()).unwrap_or_else(|_| "".to_string()),
-                stderr: String::from_utf8(output.stderr.into()).unwrap_or_else(|_| "".to_string()),
+                stdout: String::from_utf8(output.stdout).unwrap_or_else(|_| "".to_string()),
+                stderr: String::from_utf8(output.stderr).unwrap_or_else(|_| "".to_string()),
             },
         );
 

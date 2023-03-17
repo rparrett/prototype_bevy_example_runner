@@ -42,14 +42,15 @@ pub fn load(num: usize) -> Vec<Run> {
         .collect();
 
     // sort by newest first
-    paths.sort_by(|a, b| b.cmp(&a));
+    paths.sort_by(|a, b| b.cmp(a));
 
     paths
         .iter()
         .take(num)
         .map(|p| {
             let json = std::fs::read_to_string(p).unwrap();
-            serde_json::from_str(&json).expect(&format!("Failed to deserialize run data: {:?}", p))
+            serde_json::from_str(&json)
+                .unwrap_or_else(|_| panic!("Failed to deserialize run data: {:?}", p))
         })
         .collect()
 }

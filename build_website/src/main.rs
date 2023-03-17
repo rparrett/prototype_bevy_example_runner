@@ -31,7 +31,7 @@ pub fn failure_type<S: BuildHasher>(
     _: &HashMap<String, Value, S>,
 ) -> tera::Result<Value> {
     let res = try_get_value!("failure_type", "value", ExampleResult, value);
-    Ok(to_value(&FailureType::from(&res)).unwrap())
+    Ok(to_value(FailureType::from(&res)).unwrap())
 }
 
 fn main() {
@@ -71,5 +71,5 @@ fn main() {
 
     std::fs::create_dir_all("./out").unwrap();
 
-    std::fs::write("./out/index.html", &rendered).unwrap();
+    std::fs::write("./out/index.html", rendered).unwrap();
 }
