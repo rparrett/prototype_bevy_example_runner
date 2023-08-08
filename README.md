@@ -1,5 +1,7 @@
 # Prototype Bevy Example Runner
 
+Superseded by [bevy-example-tests](https://github.com/mockersf/bevy-example-tests) ([dashboard](https://vleue.com/bevy-example-tests/)).
+
 Runs as many examples as possible when new commits show up to catch runtime panics.
 
 Maybe one day this will be able to pipe input into examples and/or pipe screen captures out.
