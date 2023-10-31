@@ -1,12 +1,12 @@
 # Prototype Bevy Example Runner
 
-Superseded by [bevy-example-tests](https://github.com/mockersf/bevy-example-tests) ([dashboard](https://vleue.com/bevy-example-tests/)).
+Superseded by [bevy-example-runner](https://github.com/TheBevyFlock/bevy-example-runner) ([dashboard](https://thebevyflock.github.io/bevy-example-runner/index.html)).
 
 Runs as many examples as possible when new commits show up to catch runtime panics.
 
 Maybe one day this will be able to pipe input into examples and/or pipe screen captures out.
 
-[Dashboard Hosted on Github Pages](https://rparrett.github.io/prototype_bevy_example_runner)
+[Dashboard Hosted on GitHub Pages](https://rparrett.github.io/prototype_bevy_example_runner)
 
 ## TODO
 
